@@ -1,4 +1,4 @@
-package com.main;
+package Test;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class main {
+public class Test {
 	public static void main(String[] args) throws Exception{
 		//クローリング
         String crawlStorageFolder = "/data/crawl/root";
