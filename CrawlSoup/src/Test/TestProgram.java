@@ -93,8 +93,7 @@ public class TestProgram {
 		controller.addSeed("http://news.yahoo.co.jp/");
 		controller.start(TestCrawling.class, numberOfCrawlers);
 		
-		
-		
+		HtmlParser.HtmlParser();
 	}
 }
 

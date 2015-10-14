@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class HtmlParser {
-	public void HtmlParser(){
+	public static void HtmlParser(){
 			try{
 			ArrayList<String> URL_Forder = new ArrayList<String>();
 	
