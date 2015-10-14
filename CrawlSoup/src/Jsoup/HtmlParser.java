@@ -19,6 +19,7 @@ public class HtmlParser {
 	
 	
 			String filePath = "/home/fujii-lab/git/CrawlSoup/CrawlSoup/data/test.txt";
+			File readfile = new File(filePath);
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			String readText = null;
 			while ( (readText = br.readLine()) != null ){
@@ -29,6 +30,7 @@ public class HtmlParser {
 	
 			}
 			br.close();
+			readfile.delete();
 	
 			File file = new File("/home/fujii-lab/git/CrawlSoup/CrawlSoup/data/article.txt");
 			FileWriter pw = new FileWriter(file,true);
