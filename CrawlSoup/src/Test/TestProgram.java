@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Jsoup.HtmlParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,7 +25,7 @@ public class TestProgram {
 		long start = System.currentTimeMillis();
 
 		//クローリング
-		String crawlStorageFolder = "/data/crawl/root";
+		String crawlStorageFolder = "data/crawl/root";
 		int numberOfCrawlers = 1;
 		int maxDepthOfCrawling=2;
 
@@ -47,7 +48,7 @@ public class TestProgram {
 			ArrayList<String> URL_Forder = new ArrayList<String>();
 
 
-			String filePath = "/data/test.txt";
+			String filePath = "/home/fujii-lab/git/CrawlSoup/CrawlSoup/data/test.txt";
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			String readText = null;
 			while ( (readText = br.readLine()) != null ){
@@ -59,11 +60,11 @@ public class TestProgram {
 			}
 			br.close();
 
-			File file = new File("/data/article.txt");
+			File file = new File("/home/fujii-lab/git/CrawlSoup/CrawlSoup/data/article.txt");
 			FileWriter pw = new FileWriter(file,true);
 			for(int i=0;i<URL_Forder.size();i++){
 		        String url = URL_Forder.get(i);
-		        Document document = Jsoup.connect(url).get();
+		        Document document = Jsoup.connect(url).timeout(0).get();
 				Element content = document.select("article").first();
 				if(content!=null){
 					String title = content.select("h1").first().text();
@@ -86,7 +87,14 @@ public class TestProgram {
 	    }
 
 		long end = System.currentTimeMillis();
-		System.out.println((end - start)  + "ms");
+		System.out.println((end - start)  + "ms\n");
+		
+		//Yahoo!ニュース クローリング
+		controller.addSeed("http://news.yahoo.co.jp/");
+		controller.start(TestCrawling.class, numberOfCrawlers);
+		
+		
+		
 	}
 }
 
