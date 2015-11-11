@@ -45,7 +45,7 @@ public class ynCrawling extends WebCrawler {
      @Override
      public void visit(Page page) {
          String url = page.getWebURL().getURL();
-         File file = new File("data/test.txt");
+         File file = new File("data/test2.txt");
 
 
 
@@ -54,7 +54,7 @@ public class ynCrawling extends WebCrawler {
              try {
      			FileWriter pw = new FileWriter(file,true);
      			
-     			if(url.startsWith("http://headlines.yahoo.co.jp/hl?a")){
+     			if(url.startsWith("http://headlines.yahoo.co.jp/hl?a") && !url.contains("view-000")){
 	                pw.write("Docid: " + docid + "\r\n");
 	                pw.write("URL: " + url + "\r\n");
 	                pw.write("---------------------------------------------------\r\n");

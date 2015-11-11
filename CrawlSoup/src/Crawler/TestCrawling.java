@@ -44,7 +44,7 @@ public class TestCrawling extends WebCrawler {
      @Override
      public void visit(Page page) {
          String url = page.getWebURL().getURL();
-         File file = new File("data/test.txt");
+         File file = new File("data/test1.txt");
 
 
 

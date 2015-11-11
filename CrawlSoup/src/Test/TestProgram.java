@@ -3,11 +3,14 @@ package Test;
 import Jsoup.HtmlParser;
 
 import Crawler.TestCrawling;
+import Crawler.ynCrawling;
+import Jena.RDFCreate;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import kuromoji.ArticleReader;
 
 public class TestProgram {
 	public static void main(String[] args) throws Exception{
@@ -18,32 +21,40 @@ public class TestProgram {
 		int numberOfCrawlers = 1;
 		int maxDepthOfCrawling=2;
 
-		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(crawlStorageFolder);
-		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-		config.setMaxPagesToFetch(1000);
-
-		PageFetcher pageFetcher = new PageFetcher(config);
-		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-
-		controller.addSeed("http://news.livedoor.com/");
-		controller.start(TestCrawling.class, numberOfCrawlers);
-
-	    //livedoorHTMLパース
-		HtmlParser.HtmlParser();
+		CrawlConfig config1 = new CrawlConfig();
+		CrawlConfig config2 = new CrawlConfig();
+		config1.setMaxDepthOfCrawling(maxDepthOfCrawling);
+		config2.setMaxDepthOfCrawling(maxDepthOfCrawling);
+		config1.setCrawlStorageFolder(crawlStorageFolder + "/crawler1");
+		config2.setCrawlStorageFolder(crawlStorageFolder + "/crawler2");
+		config1.setMaxPagesToFetch(100);
+		config2.setMaxPagesToFetch(15);
 		
+		PageFetcher pageFetcher1 = new PageFetcher(config1);
+		PageFetcher pageFetcher2 = new PageFetcher(config2);
+		RobotstxtConfig robotstxtConfig1 = new RobotstxtConfig();
+		RobotstxtConfig robotstxtConfig2 = new RobotstxtConfig();
+		RobotstxtServer robotstxtServer1 = new RobotstxtServer(robotstxtConfig1, pageFetcher1);
+		RobotstxtServer robotstxtServer2 = new RobotstxtServer(robotstxtConfig2, pageFetcher2);
+		CrawlController controller1 = new CrawlController(config1, pageFetcher1, robotstxtServer1);
+		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer2);
+		
+		controller1.addSeed("http://news.livedoor.com/");
+		controller2.addSeed("http://news.yahoo.co.jp/");
+		//livedoorニュース クローリング
+		controller1.start(TestCrawling.class, numberOfCrawlers);
+		//livedoorHTMLパース
+		HtmlParser.HtmlParser_livedoor();
+		
+		//Yahoo!ニュース クローリング
+		controller2.start(ynCrawling.class, numberOfCrawlers);
+		//Yahoo!ニュース HTMLパース
+		HtmlParser.HtmlParser_yn();
+		
+		RDFCreate.RDFCreater(ArticleReader.Title_Forder(), ArticleReader.Time_Forder(), ArticleReader.Article_Forder());
 		//時間計測
 		long end = System.currentTimeMillis();
-		System.out.println((end - start)  + "ms\n");
-		/*
-		//Yahoo!ニュース クローリング
-		
-		controller.addSeed("http://news.yahoo.co.jp/");
-		controller.start(ynCrawling.class, numberOfCrawlers);
-		
-		HtmlParser.HtmlParser();*/
+		System.out.println((end - start) + "ms\n");
 	}
 }
 
