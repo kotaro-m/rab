@@ -1,38 +1,32 @@
 package Jsoup;
-import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import kuromoji.ArticleReader;
 public class HtmlParser {
 	public static void HtmlParser_livedoor(){
 		try{
-			ArrayList<String> URL_Forder = new ArrayList<String>();
+			ArrayList<String> URL = new ArrayList<String>();
 			String filePath = "data/test1.txt";
-			File readfile = new File(filePath);
-			BufferedReader br = new BufferedReader(new FileReader(filePath));
-			String readText = null;
-			while ( (readText = br.readLine()) != null ){
-				if(readText.startsWith("URL")){
-					readText = readText.replace("URL: ","");
-					URL_Forder.add(readText);
-				}
-			}
-			br.close();
-			readfile.delete();
+			URL = distinct(ArticleReader.URL_Forder(filePath));
 			
-			File file = new File("data/articleS.txt");
+			File file = new File("data/article.txt");
 			FileWriter pw = new FileWriter(file,true);
 			
-			for(int i=0;i<URL_Forder.size();i++){
-				String url = URL_Forder.get(i);
+			for(int i=0;i<URL.size();i++){
+				String url = URL.get(i);
 				Document document = Jsoup.connect(url).timeout(0).get();
-				pw.write("URL:" + url);
+				pw.write("URL:" + url + "\r\n");
+				pw.write("Publisher:livedoor\r\n");
 				Element content = document.select("article").first();
 				if(content!=null){
 					String title = content.select("h1").first().text();
@@ -67,25 +61,17 @@ public class HtmlParser {
 	
 	public static void HtmlParser_yn(){
 		try{
-			ArrayList<String> URL_Forder = new ArrayList<String>();
+			ArrayList<String> URL = new ArrayList<String>();
 			String filePath = "data/test2.txt";
-			File readfile = new File(filePath);
-			BufferedReader br = new BufferedReader(new FileReader(filePath));
-			String readText = null;
-			while ( (readText = br.readLine()) != null ){
-				if(readText.startsWith("URL")){
-					readText = readText.replace("URL: ","");
-					URL_Forder.add(readText);
-				}
-			}
-			br.close();
-			readfile.delete();
+			URL = distinct(ArticleReader.URL_Forder(filePath));
+			
 			File file = new File("data/article.txt");
 			FileWriter pw = new FileWriter(file,true);
-			for(int i=0;i<URL_Forder.size();i++){
-				String url = URL_Forder.get(i);
+			for(int i=0;i<URL.size();i++){
+				String url = URL.get(i);
 				Document document = Jsoup.connect(url).timeout(0).get();
 				pw.write("URL:" + url +"\r\n");
+				pw.write("Publisher:yahoo\r\n");
 				Element content = document.select("[class=article]").first();
 				if(content!=null){
 					String title = content.select("h1").text();
@@ -107,5 +93,45 @@ public class HtmlParser {
 		catch(IOException e){
 			System.out.println(e);
 		}
+	}
+	
+	public static void HtmlParser_sankei(){
+		try{
+			ArrayList<String> URL = new ArrayList<String>();
+			String filePath = "data/test3.txt";
+			URL = distinct(ArticleReader.URL_Forder(filePath));
+			
+			File file = new File("data/article3.txt");
+			FileWriter pw = new FileWriter(file,true);
+			for(int i=0;i<URL.size();i++){
+				String url = URL.get(i);
+				Document document = Jsoup.connect(url).timeout(0).get();
+				pw.write("URL:" + url +"\r\n");
+				pw.write("Publisher:sankei\r\n");
+				Element content = document.select("article").first();
+				if(content!=null){
+					String title = content.select("h1").text().replace(" PR", "");
+					String time = content.select("time").text();
+					String article = content.select("[class=fontMiddiumText]").text().replace("。", "。\r\n");
+					pw.write("title:" + title + "\r\n");
+					pw.write("time:" + time + "\r\n");
+					pw.write("article:" + article + "\r\n");
+					pw.write("---------------------------" + "\r\n\r\n");
+				}
+				else
+				pw.write("記事がありません\r\n");
+			}
+			pw.close();
+		}
+		catch(FileNotFoundException e){
+			System.out.println(e);
+		}
+		catch(IOException e){
+			System.out.println(e);
+		}
+	}
+	
+	public static ArrayList<String> distinct(ArrayList<String> slist){
+		return new ArrayList<String>(new LinkedHashSet<String>(slist));
 	}
 }
